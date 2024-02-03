@@ -68,3 +68,19 @@ class ContentHandleService(object):
         data["author_with_min_content"] = {**serializer.data, "content_count": author_with_min_content.content_count}
 
         return data
+    
+
+
+# from langchain.agents import create_pandas_dataframe_agent
+# from langchain.llms import OpenAI
+# import os
+# import pandas as pd
+
+# class OpenAPIAnalysis:
+
+#     def data_analysis(self):
+
+#         conent_handle_service = ContentHandleService()
+
+#         serializer = 
+#         df = pd.DataFrame(json_data)
