@@ -27,22 +27,30 @@ class ContentAPIViewset(GenericViewSet):
     )
     def list(self, request: Request) -> Response:
 
-        query_params = QueryParamsService.get_query_params_value(request.query_params)
-        content_handle_service = ContentHandleService(query_params)
+        try:
+            query_params = QueryParamsService.get_query_params_value(request.query_params)
+            content_handle_service = ContentHandleService(query_params)
 
-        authors_with_related_data = content_handle_service.get_contents_with_related_data()
+            authors_with_related_data = content_handle_service.get_contents_with_related_data()
 
-        paginator = StandardResultsSetPagination()
+            paginator = StandardResultsSetPagination()
 
-        authors_with_related_data = paginator.paginate_queryset(
-            authors_with_related_data,
-            request
-        )
+            authors_with_related_data = paginator.paginate_queryset(
+                authors_with_related_data,
+                request
+            )
 
-        serializer = ContentSerializer(authors_with_related_data, many=True)
+            serializer = ContentSerializer(authors_with_related_data, many=True)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
+        except Exception as e:
+            return Response({
+                "error": f"Error to get statistic {e}"
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
     @action(detail=False, methods=["get"])
     def statistics(self, request: Request) -> Response:
         try:
