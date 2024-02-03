@@ -1,5 +1,6 @@
-from .models import  Author
+from .models import  Content
 from core.utils.query_params import QueryParamConstant
+from django.db.models import F
 
 class ContentHandleService(object):
 
@@ -8,14 +9,12 @@ class ContentHandleService(object):
     def __init__(self, query_params):
         self.query_params = query_params
     def get_contents_with_related_data(self):
-        authors_with_related_data = Author.objects.prefetch_related('contents')
+        authors_with_related_data = Content.objects.prefetch_related('media_urls')
 
-        author_id = self.query_params.get(QueryParamConstant.AUTHOR_ID)
-        page_no = self.query_params.get(QueryParamConstant.PAGE_NO)
-        page_size = self.query_params.get(QueryParamConstant.PAGE_SIZE)
+        unique_id = self.query_params.get(QueryParamConstant.UNIQUE_ID)
 
-        if author_id:
-            authors_with_related_data = authors_with_related_data.filter(author_id=author_id)
+        if unique_id:
+            authors_with_related_data = authors_with_related_data.filter(unique_id=unique_id)
         
         return authors_with_related_data
 

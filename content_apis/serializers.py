@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from pydash import get
 
 from .models import Content, Author, MediaUrls
 
@@ -8,11 +9,22 @@ class MediaUrlsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ContentSerializer(serializers.ModelSerializer):
+    author = serializers.SerializerMethodField()
     media_urls = MediaUrlsSerializer(many=True, read_only=True)
 
     class Meta:
         model = Content
-        fields = '__all__'
+        fields = ['id', 'unique_id', 'unique_uuid', 'origin_unique_id', 'creation_date', 'creation_timestamp',
+                  'main_text', 'token_count', 'char_count', 'tag_count', 'origin_platform', 'origin_url',
+                  'like_count', 'view_count', 'comment_count', 'author', 'media_urls']
+
+    def get_author(self, obj):
+        author = get(obj,'author')
+        return {
+            'id': get(author,'id'),
+            'username': get(author, 'username'),
+            'author_id': get(author, 'author_id')
+        }
 
 class AuthorSerializer(serializers.ModelSerializer):
     contents = ContentSerializer(many=True, read_only=True)
@@ -22,7 +34,7 @@ class AuthorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# Server error serializer. This is kept here for faster implementation. This can be improved.
+# These serializers. This is kept here for faster implementation. This can be improved.
         
 class InternalServerErrorSerializer(serializers.Serializer):
     error = serializers.CharField()
