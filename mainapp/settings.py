@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'content_apis',
     #Third party
     'rest_framework',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -130,3 +131,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #custom env variables
 HACK_API_KEY = os.environ.get('HACK_API_KEY')
 API_ROOT = os.environ.get('API_ROOT')
+SWAGGER_DOCUMENTATION = os.environ.get("SWAGGER_DOCUMENTATION") == "true"
