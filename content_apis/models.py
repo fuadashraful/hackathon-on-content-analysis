@@ -30,3 +30,21 @@ class MediaUrls(models.Model):
     media_type = models.CharField(max_length=1000, null=True, blank=True)
     
     content = models.ForeignKey(Content, on_delete=models.CASCADE, related_name='media_urls')
+
+
+class UserInfo(models.Model):
+    user_id = models.IntegerField(null=True)
+    username = models.CharField(max_length=100, null=True, blank=True)
+    full_name = models.CharField(max_length=100, null=True, blank=True)
+    profile_pic_url = models.CharField(max_length=1000, null=True, blank=True)
+
+
+
+class VideoUrl(models.Model):
+    url = models.CharField(max_length=1000, null=True, blank=True)
+    user = models.ForeignKey(UserInfo, on_delete=models.CASCADE, related_name='_urls')
+
+
+class PhotoUrl(models.Model):
+    url = models.CharField(max_length=1000, null=True, blank=True)
+    user = models.ForeignKey(UserInfo, on_delete=models.CASCADE, related_name='photo_urls')

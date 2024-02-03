@@ -17,7 +17,7 @@
       "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}\\manage.py",
-      "args": ["fetch_contents"],
+      "args": ["process_scrap"],
       "django": true
     }
   ]
