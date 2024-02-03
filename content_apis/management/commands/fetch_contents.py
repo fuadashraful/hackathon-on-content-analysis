@@ -40,24 +40,29 @@ def retry_decorator(max_attempts=3, wait_seconds=5):
 class Command(BaseCommand):
     help = "Fetch contents using third party APIS"
 
+    @retry_decorator()
     def get_content_data(self, page):
         api_endpoint = f"{settings.API_ROOT}?{page}=1"
         response = requests.get(api_endpoint, headers=headers)
 
         return response
 
-    def insert_content_and_related_data_to_db(self, content):
-        # We could move keys to constant and make robust function to get data in normal industry practice
+    def create_or_get_existing_author(self, content):
+        author_id = get(content, 'author.id')
 
-        #Author data
-        created_author = Author(
-            author_id = get(content, 'author.id'),
-            username = get(content, 'author.username')
-        )
+        existing_author = Author.objects.filter(author_id=author_id).first()
 
-        created_author.save()
+        if not existing_author:
+            existing_author = Author(
+                author_id = get(content, 'author.id'),
+                username = get(content, 'author.username')
+            )
 
-        #Content data
+            existing_author.save()
+
+        return existing_author
+
+    def create_content(self, content, author):
         created_content = Content(
             unique_id = get(content, 'unique_id'),
             unique_uuid = get(content, 'unique_uuid'),
@@ -73,12 +78,14 @@ class Command(BaseCommand):
             like_count = get(content, 'stats.digg_counts.likes.count'),
             view_count = get(content, 'stats.digg_counts.views.count'),
             comment_count = get(content, 'stats.digg_counts.comments.count'),
-            author=created_author
+            author=author
         )
 
         created_content.save()
 
-        #Media data
+        return created_content
+    
+    def create_media_urls(self, content, created_content):
         media_urls = get(content, "media.urls")
         media_type = get(content, "media.media_type")
 
@@ -92,6 +99,18 @@ class Command(BaseCommand):
 
         MediaUrls.objects.bulk_create(media_url_instances)
 
+    def insert_content_and_related_data_to_db(self, content):
+        # We could move keys to constant and make robust function to get data in normal industry practice
+
+
+        author = self.create_or_get_existing_author(content)
+        created_content = self.create_content(content, author)
+
+        self.create_media_urls(content, created_content)
+
+        #Media data
+
+
     def insert_content_data(self, contents):
 
         unique_ids = [get(content, 'unique_id') for content in contents]
@@ -101,19 +120,15 @@ class Command(BaseCommand):
         inserted_content_ids = [content_instance.unique_id for content_instance in content_instances]
 
         for content in contents:
-
             if get(content, 'unique_id') not in inserted_content_ids:
                 self.insert_content_and_related_data_to_db(content)
 
     def handle(self, *args, **options):
 
-
-        while RUN_FOREVER:
-            
+        while RUN_FOREVER: 
             next_page = 1
 
             while next_page:
-                
                 try:
                     response = self.get_content_data(next_page)
 
@@ -123,9 +138,8 @@ class Command(BaseCommand):
                         self.insert_content_data(get(response_data, 'data', []))
 
                         self.stdout.write(
-                            self.style.SUCCESS(f'page {next_page} data{response_data}')
+                            self.style.SUCCESS(f'Synced data for {next_page}')
                         )
-
                         next_page = get(response_data, 'next')
                     else:
                         next_page+=1
