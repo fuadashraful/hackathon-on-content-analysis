@@ -1,11 +1,12 @@
 from core.utils.query_params import QueryParamConstant
 from django.db.models import F
-from django.db.models import Count
+from django.db.models import Count, Sum
 
 from .models import  Content, Author, MediaUrls
 from .serializers import (
     AuthorWiseContentCountSerializer,
-    PlatformContentCountSerializer
+    PlatformContentCountSerializer,
+    ContentLikeCommentViewSumSerializer,
 )
 
 class ContentHandleService(object):
@@ -41,5 +42,16 @@ class ContentHandleService(object):
         serializer = PlatformContentCountSerializer(platform_content_count, many=True)
 
         data["platform_wise_content_count"] = serializer.data
+
+        all_content_like_comment_view_sum = Content.objects.aggregate(
+            total_likes=Sum('like_count'),
+            total_comments=Sum('comment_count'),
+            total_views=Sum('view_count')
+        )
+
+        serializer = ContentLikeCommentViewSumSerializer(all_content_like_comment_view_sum)
+
+        data["all_content_like_comment_view_sum"] = serializer.data
+
 
         return data

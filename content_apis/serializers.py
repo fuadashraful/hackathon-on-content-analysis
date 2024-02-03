@@ -54,3 +54,8 @@ class InternalServerErrorSerializer(serializers.Serializer):
 class ContentListQueryParamsSerializer(serializers.Serializer):
     page_no = serializers.IntegerField(required=False)
     page_size = serializers.IntegerField(required=False)
+
+class ContentLikeCommentViewSumSerializer(serializers.Serializer):
+    total_likes = serializers.IntegerField(required=False)
+    total_comments = serializers.IntegerField(required=False)
+    total_views = serializers.IntegerField(required=False)
