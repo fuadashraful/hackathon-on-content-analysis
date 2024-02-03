@@ -1,7 +1,26 @@
 from rest_framework import serializers
 from pydash import get
 
-from .models import Content, Author, MediaUrls
+from .models import Content, Author, MediaUrls, UserInfo, VideoUrl, PhotoUrl
+
+
+class VideoUrlSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VideoUrl
+        fields = '__all__'
+
+class PhotoUrlSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PhotoUrl
+        fields = '__all__'
+
+class UserInfoSerializer(serializers.ModelSerializer):
+    video_urls = VideoUrlSerializer(many=True)
+    photo_urls = PhotoUrlSerializer(many=True)
+    class Meta:
+        model = UserInfo
+        fields = '__all__'
+
 
 class MediaUrlsSerializer(serializers.ModelSerializer):
     class Meta:

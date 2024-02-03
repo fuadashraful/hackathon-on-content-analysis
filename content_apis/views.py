@@ -9,10 +9,13 @@ from .serializers import (
     ContentSerializer,
     InternalServerErrorSerializer,
     ContentListQueryParamsSerializer,
+    UserInfoSerializer
 )
 from .services import ContentHandleService
 from .paginator import StandardResultsSetPagination
 from core.utils.query_params import QueryParamsService
+
+from .models import UserInfo
 
 
 class ContentAPIViewset(GenericViewSet):
@@ -66,6 +69,16 @@ class ContentAPIViewset(GenericViewSet):
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+    @action(detail=False, methods=["get"])
+    def scraped_data(self, request: Request) -> Response:
+        user_infos = UserInfo.objects.prefetch_related('video_urls', 'photo_urls')
+
+        serializer = UserInfoSerializer(user_infos, many=True)
+
+        return Response(
+            serializer.data
+        )
 
 #Tried to do openapi analysis        
     # @action(detail=False, methods=["get"])

@@ -42,7 +42,7 @@ class UserInfo(models.Model):
 
 class VideoUrl(models.Model):
     url = models.CharField(max_length=1000, null=True, blank=True)
-    user = models.ForeignKey(UserInfo, on_delete=models.CASCADE, related_name='_urls')
+    user = models.ForeignKey(UserInfo, on_delete=models.CASCADE, related_name='video_urls')
 
 
 class PhotoUrl(models.Model):
