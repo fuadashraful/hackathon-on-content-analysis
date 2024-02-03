@@ -7,6 +7,7 @@ from .serializers import (
     AuthorWiseContentCountSerializer,
     PlatformContentCountSerializer,
     ContentLikeCommentViewSumSerializer,
+    AuthorSerializer,
 )
 
 class ContentHandleService(object):
@@ -53,5 +54,17 @@ class ContentHandleService(object):
 
         data["all_content_like_comment_view_sum"] = serializer.data
 
+        # Due to time constraint writing some queries in this method. In reallime it could be more simple
+        author_with_max_content = Author.objects.annotate(content_count=Count('contents')).order_by('-content_count').first()
+        
+        serializer = AuthorSerializer(author_with_max_content)
+
+        data["author_with_max_content"] = {**serializer.data, "content_count": author_with_max_content.content_count}
+
+        author_with_min_content = Author.objects.annotate(content_count=Count('contents')).order_by('content_count').first()
+        
+        serializer = AuthorSerializer(author_with_min_content)
+
+        data["author_with_min_content"] = {**serializer.data, "content_count": author_with_min_content.content_count}
 
         return data
