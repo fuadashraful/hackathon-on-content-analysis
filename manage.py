@@ -3,6 +3,7 @@
 import os
 import sys
 
+from core.utils.configurations import load_environment_variable
 
 def main():
     """Run administrative tasks."""
@@ -19,4 +20,9 @@ def main():
 
 
 if __name__ == '__main__':
+    base_dir = os.path.dirname(os.path.realpath(__file__))
+    env_name = os.environ.get("DJANGO_ENV", "environment")
+
+    load_environment_variable(base_dir, env_name)
+
     main()
