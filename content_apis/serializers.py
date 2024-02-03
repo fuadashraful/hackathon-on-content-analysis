@@ -20,3 +20,13 @@ class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Author
         fields = '__all__'
+
+
+# Server error serializer. This is kept here for faster implementation. This can be improved.
+        
+class InternalServerErrorSerializer(serializers.Serializer):
+    error = serializers.CharField()
+
+class ContentListQueryParamsSerializer(serializers.Serializer):
+    page_no = serializers.IntegerField(required=False)
+    page_size = serializers.IntegerField(required=False)
