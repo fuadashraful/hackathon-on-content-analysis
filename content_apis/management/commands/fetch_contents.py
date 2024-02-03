@@ -70,9 +70,9 @@ class Command(BaseCommand):
             tag_count = get(content, 'context.tag_count'),
             origin_platform = get(content, 'origin_details.origin_platform'),
             origin_url = get(content, 'origin_details.origin_url'),
-            like_count = get(content, 'digg_counts.stats.likes.count'),
-            view_count = get(content, 'digg_counts.stats.views.count'),
-            comment_count = get(content, 'digg_counts.stats.comments.count'),
+            like_count = get(content, 'stats.digg_counts.likes.count'),
+            view_count = get(content, 'stats.digg_counts.views.count'),
+            comment_count = get(content, 'stats.digg_counts.comments.count'),
             author=created_author
         )
 

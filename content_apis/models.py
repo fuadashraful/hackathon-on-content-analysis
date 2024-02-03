@@ -22,11 +22,11 @@ class Content(models.Model):
     view_count = models.IntegerField(null=True)
     comment_count = models.IntegerField(null=True)
     
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='contents')
 
 
 class MediaUrls(models.Model):
     url = models.CharField(max_length=1000, null=True, blank=True)
     media_type = models.CharField(max_length=1000, null=True, blank=True)
     
-    content = models.ForeignKey(Content, on_delete=models.CASCADE)
+    content = models.ForeignKey(Content, on_delete=models.CASCADE, related_name='media_urls')
