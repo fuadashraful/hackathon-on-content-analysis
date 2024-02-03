@@ -7,5 +7,14 @@ class ContentAPIViewset(GenericViewSet):
 
     def list(self, request: Request) -> Response:
         return Response({
-            "name": "Test response"
+             "author": {
+                "id": 919301,
+                "username": "stuffedddd"
+            },
+            "context": {
+                "main_text": "@pizzahuteg",
+                "token_count": 1,
+                "char_count": 11,
+                "tag_count": 1
+            },
         })
