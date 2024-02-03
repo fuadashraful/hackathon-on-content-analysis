@@ -8,6 +8,7 @@ from .serializers import (
     PlatformContentCountSerializer,
     ContentLikeCommentViewSumSerializer,
     AuthorSerializer,
+    ContentSerializer
 )
 
 class ContentHandleService(object):
@@ -71,7 +72,10 @@ class ContentHandleService(object):
     
 
 
-# from langchain.agents import create_pandas_dataframe_agent
+# '''
+# Tried openapi statictics analysis but couldn't complete
+# '''
+# from langchain_experimental.agents import create_pandas_dataframe_agent
 # from langchain.llms import OpenAI
 # import os
 # import pandas as pd
@@ -80,7 +84,16 @@ class ContentHandleService(object):
 
 #     def data_analysis(self):
 
-#         conent_handle_service = ContentHandleService()
+#         content_handle_service = ContentHandleService({})
+#         contents = content_handle_service.get_contents_with_related_data()
+#         serializer = ContentSerializer(contents, many=True)
+        
+#         data = serializer.data
 
-#         serializer = 
-#         df = pd.DataFrame(json_data)
+#         df = pd.DataFrame(data)
+        
+#         agent = create_pandas_dataframe_agent(OpenAI(temperature=0, model_name='text-davinci-003'), df, verbose=True)
+
+#         data = agent.query("What is the analysis of the provided data?")
+
+#         return data

@@ -66,3 +66,15 @@ class ContentAPIViewset(GenericViewSet):
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+#Tried to do openapi analysis        
+    # @action(detail=False, methods=["get"])
+    # def openapi_report(self, request: Request) -> Response:
+        
+    #     openapi_service = OpenAPIAnalysis()
+
+    #     data = openapi_service.data_analysis()
+
+    #     return Response(
+    #         data
+    #     )
