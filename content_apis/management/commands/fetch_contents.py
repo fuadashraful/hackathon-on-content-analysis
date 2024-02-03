@@ -1,6 +1,6 @@
 import requests
 from django.conf import settings
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 import logging
 from pydash import get
@@ -8,8 +8,10 @@ from rest_framework import status
 import time
 
 from content_apis.models import Content, Author, MediaUrls
-         
+
+#These docorator and constant stuffs should be in seperate file in normal dev phase        
 RUN_FOREVER = True
+FIVE_MIN_INTERVAL = 5 * 60 * 1000
 headers = {
     'x-api-key':  settings.HACK_API_KEY
 }
@@ -19,11 +21,12 @@ def retry_decorator(max_attempts=3, wait_seconds=5):
     def decorator(func):
         def wrapper(*args, **kwargs):
             response = None
-            for _ in range(max_attempts):
+            for try_no in range(max_attempts):
                 try:
+                    logging.info(f"Try no {try_no+1}")
                     response = func(*args, **kwargs)
                     if get(response,'status_code') != status.HTTP_200_OK:
-                        time.wait(wait_seconds * 1000)
+                        time.sleep(wait_seconds * 1000)
                     else:
                         return response
 
@@ -42,7 +45,7 @@ class Command(BaseCommand):
 
     @retry_decorator()
     def get_content_data(self, page):
-        api_endpoint = f"{settings.API_ROOT}?{page}=1"
+        api_endpoint = f"{settings.API_ROOT}?page={page}"
         response = requests.get(api_endpoint, headers=headers)
 
         return response
@@ -147,3 +150,9 @@ class Command(BaseCommand):
                 except Exception as e:
                     next_page = None
                     logging.error(f"Got the error while fetching {e}")
+        
+            self.stdout.write(
+                self.style.SUCCESS('Waiting 5 min for next sync request')
+            )
+
+            time.sleep(FIVE_MIN_INTERVAL)
