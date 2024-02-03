@@ -2,12 +2,18 @@ from rest_framework import status
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from drf_yasg.utils import swagger_auto_schema
 
-from .serializers import ContentSerializer, InternalServerErrorSerializer, ContentListQueryParamsSerializer
+from .serializers import (
+    ContentSerializer,
+    InternalServerErrorSerializer,
+    ContentListQueryParamsSerializer,
+)
 from .services import ContentHandleService
 from .paginator import StandardResultsSetPagination
 from core.utils.query_params import QueryParamsService
+
 
 class ContentAPIViewset(GenericViewSet):
 
@@ -36,3 +42,19 @@ class ContentAPIViewset(GenericViewSet):
         serializer = ContentSerializer(authors_with_related_data, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["get"])
+    def statistics(self, request: Request) -> Response:
+        try:
+
+            content_handle_service = ContentHandleService()
+            data = content_handle_service.get_content_statistics()
+
+            return Response(data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({
+                "error": f"Error to get statistic {e}"
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

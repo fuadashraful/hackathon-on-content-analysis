@@ -34,6 +34,18 @@ class AuthorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class AuthorWiseContentCountSerializer(serializers.ModelSerializer):
+    content_count = serializers.IntegerField()
+
+    class Meta:
+        model = Author
+        fields = ['author_id', 'username', 'content_count']
+
+
+class PlatformContentCountSerializer(serializers.Serializer):
+    origin_platform = serializers.CharField()
+    content_count = serializers.IntegerField()
+
 # These serializers. This is kept here for faster implementation. This can be improved.
         
 class InternalServerErrorSerializer(serializers.Serializer):
