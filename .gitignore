@@ -1,0 +1,4 @@
+/zelfenv
+**.pyc
+
+**.sqlite3
